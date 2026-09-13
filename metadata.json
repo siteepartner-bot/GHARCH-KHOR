@@ -1,0 +1,6 @@
+{
+  "name": "داستان حسن و نیوشا",
+  "description": "یک بازی پلتفرمر 2D عاشقانه و داستانی برای حسن و نیوشا شامل ۱۰ مرحله متنوع، انواع دشمنان، سکوهای گوناگون و خاطرات عاشقانه",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
