@@ -113,11 +113,13 @@ export default function App() {
 
   return (
     <div className="w-screen h-screen overflow-hidden bg-rose-950 font-['Vazirmatn',sans-serif] relative select-none">
-      {/* Landscape Orientation Recommendation Bar for Small Mobile Screens */}
-      <div className="sm:hidden fixed top-0 inset-x-0 z-50 bg-rose-900/90 text-rose-100 text-[10px] py-1 px-2 text-center flex items-center justify-center gap-1 border-b border-rose-500/30">
-        <Smartphone className="w-3 h-3 rotate-90" />
-        <span>برای تجربه بهتر، گوشی را افقی (Landscape) بگیرید.</span>
-      </div>
+      {/* Landscape Orientation Recommendation Bar for Small Mobile Screens (Menu Only) */}
+      {activeScreen === 'menu' && (
+        <div className="sm:hidden fixed top-0 inset-x-0 z-50 bg-rose-900/90 text-rose-100 text-[10px] py-1 px-2 text-center flex items-center justify-center gap-1 border-b border-rose-500/30">
+          <Smartphone className="w-3 h-3 rotate-90" />
+          <span>برای دید بهتر، گوشی را افقی (Landscape) بگیرید.</span>
+        </div>
+      )}
 
       {/* Main Menu */}
       {activeScreen === 'menu' && (

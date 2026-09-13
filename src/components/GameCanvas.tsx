@@ -165,14 +165,15 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      // Handle Canvas resize
-      if (canvas.width !== canvas.clientWidth || canvas.height !== canvas.clientHeight) {
-        canvas.width = canvas.clientWidth;
-        canvas.height = canvas.clientHeight;
-      }
+      // Handle Canvas resize with High-DPI support
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const displayWidth = canvas.clientWidth || window.innerWidth;
+      const displayHeight = canvas.clientHeight || window.innerHeight;
 
-      const canvasWidth = canvas.width;
-      const canvasHeight = canvas.height;
+      if (canvas.width !== Math.floor(displayWidth * dpr) || canvas.height !== Math.floor(displayHeight * dpr)) {
+        canvas.width = Math.floor(displayWidth * dpr);
+        canvas.height = Math.floor(displayHeight * dpr);
+      }
 
       gameTime += 0.016;
 
@@ -429,27 +430,61 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
         }
       }
 
-      // --- 9. CAMERA SCROLLING ---
-      const targetCamX = p.x - canvasWidth / 2 + p.width / 2;
-      const maxCamX = Math.max(0, levelConfig.worldWidth - canvasWidth);
+      // --- 9. DYNAMIC RESPONSIVE CAMERA & VIEWPORT SCALING ---
+      // Reference world height is 650
+      const DESIGN_WORLD_HEIGHT = 650;
+      let scale = displayHeight / DESIGN_WORLD_HEIGHT;
+
+      // On mobile portrait or narrow screens, ensure player can see at least 520 world units horizontally
+      const minVisibleWorldWidth = 520;
+      if (displayWidth / scale < minVisibleWorldWidth) {
+        scale = displayWidth / minVisibleWorldWidth;
+      }
+
+      // Clamp scale to prevent extreme zoom-in or zoom-out
+      scale = Math.max(0.45, Math.min(2.5, scale));
+
+      const viewWidth = displayWidth / scale;
+      const viewHeight = displayHeight / scale;
+
+      // Camera X: Smooth horizontal tracking (center player slightly to the left to see what's ahead)
+      const targetCamX = p.x - viewWidth * 0.38;
+      const maxCamX = Math.max(0, levelConfig.worldWidth - viewWidth);
       cameraXRef.current = Math.max(0, Math.min(maxCamX, targetCamX));
       const cameraX = cameraXRef.current;
 
+      // Camera Y:
+      // When screen is taller than world height (e.g. mobile portrait), align ground with bottom of screen.
+      // When screen is shorter, track player vertically smoothly within world bounds.
+      let cameraY = 0;
+      if (viewHeight >= levelConfig.worldHeight) {
+        // Ground is at worldHeight (650). Align bottom of camera with bottom of world!
+        cameraY = levelConfig.worldHeight - viewHeight;
+      } else {
+        const targetCamY = p.y - viewHeight * 0.62;
+        const maxCamY = levelConfig.worldHeight - viewHeight;
+        cameraY = Math.max(0, Math.min(maxCamY, targetCamY));
+      }
+
       // --- 10. CANVAS RENDERING ---
       ctx.save();
+      // Apply High-DPI screen scaling
+      ctx.scale(dpr, dpr);
 
-      // Render Atmosphere Background & Weather
+      // Render Atmosphere Background & Weather across full display canvas
       SpriteRenderer.drawBackground(
         ctx,
         levelConfig.theme,
-        canvasWidth,
-        canvasHeight,
-        cameraX,
+        displayWidth,
+        displayHeight,
+        cameraX * scale,
         gameTime
       );
 
-      // Translate context for camera offset
-      ctx.translate(-cameraX, 0);
+      // Apply World Camera Translation & Scale
+      ctx.save();
+      ctx.scale(scale, scale);
+      ctx.translate(-cameraX, -cameraY);
 
       // Draw Platforms
       platforms.forEach((plat) => {
@@ -486,7 +521,8 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
       // Draw Niyousha Playable Character
       SpriteRenderer.drawNiyoushaPlayer(ctx, p, gameTime);
 
-      ctx.restore();
+      ctx.restore(); // Restore world camera transform
+      ctx.restore(); // Restore DPR scale
 
       animId = requestAnimationFrame(gameLoop);
     };
