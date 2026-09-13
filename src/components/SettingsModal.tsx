@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { X, Volume2, VolumeX, Music, Smartphone, Trash2 } from 'lucide-react';
 import { soundEngine } from '../utils/audioEngine';
+import { FullscreenButton } from './FullscreenButton';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -130,6 +131,15 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               onUpdateSettings({ touchEnabled: e.target.checked });
             }}
             className="w-5 h-5 accent-amber-500 rounded cursor-pointer"
+          />
+        </div>
+
+        {/* Fullscreen Option */}
+        <div className="pt-2 border-t border-slate-800">
+          <FullscreenButton
+            id="settings-fullscreen-btn"
+            variant="button"
+            className="w-full bg-slate-800 hover:bg-slate-700 text-rose-200 border border-rose-500/30"
           />
         </div>
 

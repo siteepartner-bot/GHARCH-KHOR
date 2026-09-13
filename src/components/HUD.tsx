@@ -1,5 +1,6 @@
 import React from 'react';
 import { Heart, Star, Mail, Camera, Pause } from 'lucide-react';
+import { FullscreenButton } from './FullscreenButton';
 
 interface HUDProps {
   hearts: number;
@@ -68,14 +69,18 @@ export const HUD: React.FC<HUDProps> = ({
         {levelTitle}
       </div>
 
-      {/* Right side: Pause Button */}
-      <button
-        onClick={onPause}
-        className="pointer-events-auto bg-slate-900/80 hover:bg-rose-900/90 backdrop-blur-md p-2.5 rounded-2xl border border-rose-500/30 text-rose-200 hover:text-white transition-all shadow-lg active:scale-95"
-        title="توقف بازی"
-      >
-        <Pause className="w-5 h-5" />
-      </button>
+      {/* Right side: Fullscreen & Pause Buttons */}
+      <div className="flex items-center gap-2 pointer-events-auto">
+        <FullscreenButton id="hud-fullscreen-btn" />
+        <button
+          onClick={onPause}
+          className="bg-slate-900/80 hover:bg-rose-900/90 backdrop-blur-md p-2.5 rounded-2xl border border-rose-500/30 text-rose-200 hover:text-white transition-all shadow-lg active:scale-95 flex items-center justify-center"
+          title="توقف بازی"
+        >
+          <Pause className="w-5 h-5" />
+        </button>
+      </div>
     </div>
   );
 };
+

@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { Play, Camera, Map, Settings, Info, Heart } from 'lucide-react';
 import { soundEngine } from '../utils/audioEngine';
 import { SpriteRenderer } from './SpriteRenderer';
+import { FullscreenButton } from './FullscreenButton';
 
 interface MainMenuProps {
   onStartGame: () => void;
@@ -127,6 +128,11 @@ export const MainMenu: React.FC<MainMenuProps> = ({
     <div className="relative w-full h-full flex flex-col items-center justify-between p-4 sm:p-8 select-none overflow-hidden">
       {/* Interactive Background Canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover z-0" />
+
+      {/* Top Controls Bar */}
+      <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between pointer-events-none">
+        <FullscreenButton id="main-menu-fullscreen-btn" variant="badge" showText={true} className="pointer-events-auto" />
+      </div>
 
       {/* Top Header Banner */}
       <motion.div

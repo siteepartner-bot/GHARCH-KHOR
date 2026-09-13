@@ -8,6 +8,7 @@ import { LetterModal } from './LetterModal';
 import { LevelCompleteModal } from './LevelCompleteModal';
 import { GameOverModal } from './GameOverModal';
 import { LevelStoryIntro } from './LevelStoryIntro';
+import { FullscreenButton } from './FullscreenButton';
 
 interface GameCanvasProps {
   levelConfig: LevelConfig;
@@ -557,6 +558,11 @@ export const GameCanvas: React.FC<GameCanvasProps> = ({
               >
                 ادامه بازی ❤️
               </button>
+              <FullscreenButton
+                id="pause-fullscreen-btn"
+                variant="button"
+                className="w-full bg-slate-800 hover:bg-slate-700 text-rose-200 border border-slate-700"
+              />
               <button
                 onClick={() => {
                   soundEngine.playButtonClick();
